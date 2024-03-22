@@ -48,6 +48,7 @@ import com.tailscale.ipn.ui.localapi.Client
 import com.tailscale.ipn.ui.localapi.Request
 import com.tailscale.ipn.ui.model.Ipn
 import com.tailscale.ipn.ui.notifier.Notifier
+import com.tailscale.ipn.ui.util.NotificationsManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -97,6 +98,7 @@ class App : Application(), libtailscale.AppContext {
   var vpnReady = false
   private lateinit var connectivityManager: ConnectivityManager
   private lateinit var app: libtailscale.Application
+  private lateinit var notificationsManager: NotificationsManager
 
   override fun getPlatformDNSConfig(): String = dns.dnsConfigAsString
 
@@ -124,6 +126,7 @@ class App : Application(), libtailscale.AppContext {
     applicationScope.launch {
       Notifier.tileReady.collect { isTileReady -> setTileReady(isTileReady) }
     }
+    notificationsManager = NotificationsManager(Notifier)
   }
 
   override fun onTerminate() {

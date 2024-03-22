@@ -96,7 +96,7 @@
     <string name="run_exit_node_caution">Caution: Running an exit node will severely impact battery life. On a metered data plan, significant cellular data charges may also apply. Always disable this feature when no longer needed.</string>
     <string name="stop_running_as_exit_node">Stop Running as Exit Node</string>
     <string name="start_running_as_exit_node">Start Running as Exit Node</string>
-    <string name="running_as_exit_node">Now Running as Exit Node</string>
+    <string name="running_as_exit_node">Running as Exit Node</string>
     <string name="run_exit_node_explainer_running">Other devices in your tailnet can now route their Internet traffic through this Android device. Make sure to approve this exit node in the admin console in order for other devices to see it.</string>
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>
@@ -115,5 +115,10 @@
     <string name="tailnet_lock_key_explainer">Used to authorize changes to the Tailnet lock configuration.</string>
     <string name="bug_report_id">Bug Report ID</string>
     <string name="learn_more">Learn more…</string>
+    <string name="shows_a_notification_when_the_device_is_being_used_as_an_exit_node">Shows a notification when the device is being used as an exit node.</string>
+    <string name="other_devices_can_access_the_internet_using_the_ip_address_of_this_device_you_can_turn_this_off_in_the_tailscale_app">Other devices can access the Internet using this device. You can disable this in the Tailscale app.</string>
+    <string name="awaiting_approval">Awaiting Approval</string>
+    <string name="notifications_to_inform_the_user_when_device_approval_is_needed">Notifications to inform the user when device approval is needed.</string>
+    <string name="this_device_must_be_approved_in_the_tailscale_admin_console_before_it_can_connect">This device must be approved in the Tailscale admin console before it can connect.</string>
 
 </resources>

@@ -3,10 +3,12 @@
 
 package com.tailscale.ipn
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.RestrictionsManager
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.net.VpnService
 import android.os.Bundle
@@ -15,6 +17,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -108,9 +111,7 @@ class MainActivity : ComponentActivity() {
                   MullvadExitNodePicker(
                       it.arguments!!.getString("countryCode")!!, exitNodePickerNav)
                 }
-              composable("runExitNode") {
-                  RunExitNodeView(exitNodePickerNav)
-              }
+            composable("runExitNode") { RunExitNodeView(exitNodePickerNav) }
           }
           composable(
               "peerDetails/{nodeId}",
@@ -166,6 +167,7 @@ class MainActivity : ComponentActivity() {
     // (jonathan) TODO: Requesting VPN permissions onStart is a bit aggressive.  This should
     // be done when the user initiall starts the VPN
     requestVpnPermission()
+    requestNotificationsPermission()
   }
 
   override fun onStop() {
@@ -189,6 +191,16 @@ class MainActivity : ComponentActivity() {
     } else {
       Notifier.vpnPermissionGranted.set(true)
       Log.i("VPN", "VPN permission granted")
+    }
+  }
+
+  private fun requestNotificationsPermission() {
+    if (ActivityCompat.checkSelfPermission(
+        App.getApplication().applicationContext, Manifest.permission.POST_NOTIFICATIONS) !=
+        PackageManager.PERMISSION_GRANTED) {
+      Log.d("PersistentNotifications", "Missing permission to deliver notifications, requesting")
+      ActivityCompat.requestPermissions(
+          this, listOf<String>(Manifest.permission.POST_NOTIFICATIONS).toTypedArray(), 0)
     }
   }
 }
