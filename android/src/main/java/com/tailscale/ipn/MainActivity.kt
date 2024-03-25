@@ -7,7 +7,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.RestrictionsManager
-import android.net.Uri
 import android.net.VpnService
 import android.os.Bundle
 import android.provider.Settings
@@ -16,18 +15,24 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
+ltContract
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import androidx.navigation.navigation
 import com.tailscale.ipn.Peer.RequestCodes
 import com.tailscale.ipn.mdm.MDMSettings
+import com.tailscale.ipn.ui.model.Ipn
 import com.tailscale.ipn.ui.notifier.Notifier
 import com.tailscale.ipn.ui.theme.AppTheme
 import com.tailscale.ipn.ui.view.AboutView
@@ -57,6 +62,7 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
   private var notifierScope: CoroutineScope? = null
   private lateinit var requestVpnPermission: ActivityResultLauncher<Unit>
+  private lateinit var navController: NavController
 
   companion object {
     // Request codes for Android callbacks.
@@ -68,33 +74,35 @@ class MainActivity : ComponentActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    handleIntent(intent)
 
     setContent {
       AppTheme {
         val navController = rememberNavController()
+        this@MainActivity.navController = navController
         NavHost(
-            navController = navController,
-            startDestination = "main",
-            enterTransition = {
-              slideInHorizontally(animationSpec = tween(150), initialOffsetX = { it })
-            },
-            exitTransition = {
-              slideOutHorizontally(animationSpec = tween(150), targetOffsetX = { -it })
-            },
-            popEnterTransition = {
-              slideInHorizontally(animationSpec = tween(150), initialOffsetX = { -it })
-            },
-            popExitTransition = {
-              slideOutHorizontally(animationSpec = tween(150), targetOffsetX = { it })
-            }) {
-              val mainViewNav =
-                  MainViewNavigation(
-                      onNavigateToSettings = { navController.navigate("settings") },
-                      onNavigateToPeerDetails = {
-                        navController.navigate("peerDetails/${it.StableID}")
-                      },
-                      onNavigateToExitNodes = { navController.navigate("exitNodes") },
-                  )
+          navController = navController,
+          startDestination = "main",
+          enterTransition = {
+            slideInHorizontally(animationSpec = tween(150), initialOffsetX = { it })
+          },
+          exitTransition = {
+            slideOutHorizontally(animationSpec = tween(150), targetOffsetX = { -it })
+          },
+          popEnterTransition = {
+            slideInHorizontally(animationSpec = tween(150), initialOffsetX = { -it })
+          },
+          popExitTransition = {
+            slideOutHorizontally(animationSpec = tween(150), targetOffsetX = { it })
+          }) {
+          val mainViewNav =
+              MainViewNavigation(
+                  onNavigateToSettings = { navController.navigate("settings") },
+                  onNavigateToPeerDetails = {
+                    navController.navigate("peerDetails/${it.StableID}")
+                  },
+                  onNavigateToExitNodes = { navController.navigate("exitNodes") },
+              )
 
               val settingsNav =
                   SettingsNav(
@@ -157,6 +165,13 @@ class MainActivity : ComponentActivity() {
                 PermissionsView(nav = backNav, openApplicationSettings = ::openApplicationSettings)
               }
               composable("intro") { IntroView { navController.popBackStack() } }
+              composable(
+              "authComplete",
+              deepLinks =
+                  listOf(
+                      navDeepLink { uriPattern = "https://login.tailscale.com/admin/machines" })) {
+                MainView(navigation = mainViewNav)
+              }
             }
 
         // Show the intro screen one time
@@ -179,6 +194,28 @@ class MainActivity : ComponentActivity() {
     // This will trigger the login flow
     lifecycleScope.launch {
       Notifier.browseToURL.collect { url -> url?.let { Dispatchers.Main.run { login(it) } } }
+      }
+    }
+
+  override fun onNewIntent(intent: Intent?) {
+    Log.d("KARI", "new intent action: ${intent?.action}")
+    Log.d("KARI", "new intent data: ${intent?.data}")
+    super.onNewIntent(intent)
+    setIntent(intent)
+    intent?.let { handleIntent(it) }
+  }
+
+  private fun handleIntent(intent: Intent) {
+    val action = intent?.action
+    val data = intent?.dataString
+    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+    Log.d("KARI", "tailscale handling Intent")
+    Log.d("KARI", "tailscale intent action: $action")
+    Log.d("KARI", "tailscale intent data: $data")
+    // Assuming you're in MainActivity and want to navigate to MainView
+    if (Intent.ACTION_VIEW == intent.action) {
+      Log.d("KARI", "navigating bc of intent")
+      runOnUiThread { navController.navigate("authComplete") }
     }
   }
 
@@ -186,8 +223,11 @@ class MainActivity : ComponentActivity() {
     // (jonathan) TODO: This is functional, but the navigation doesn't quite work
     // as expected.  There's probably a better built in way to do this.  This will
     // unblock in dev for the time being though.
-    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-    startActivity(browserIntent)
+    // val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+    // startActivity(browserIntent)
+
+    val customTabsIntent = CustomTabsIntent.Builder().build()
+    customTabsIntent.launchUrl(this, url.toUri())
   }
 
   override fun onResume() {

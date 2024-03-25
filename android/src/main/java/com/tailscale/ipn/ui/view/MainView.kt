@@ -3,6 +3,8 @@
 
 package com.tailscale.ipn.ui.view
 
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -45,6 +47,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -139,6 +142,20 @@ fun MainView(navigation: MainViewNavigation, viewModel: MainViewModel = viewMode
           }
     }
   }
+}
+
+@Composable
+fun MyWebView(urlToRender: String) {
+  AndroidView(
+      modifier = Modifier.fillMaxSize(),
+      factory = { context ->
+        WebView(context).apply {
+          webViewClient =
+              WebViewClient() // This line is necessary to keep navigation within the WebView
+          loadUrl(urlToRender)
+        }
+      },
+      update = { webView -> webView.loadUrl(urlToRender) })
 }
 
 @Composable
