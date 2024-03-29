@@ -85,11 +85,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-<<<<<<< HEAD
                     android:host="www.tailscale.com"
-=======
-                    android:host="login.tailscale.com"
->>>>>>> f451ffe ( a)
                     android:scheme="https" />
             </intent-filter>
         </activity>
