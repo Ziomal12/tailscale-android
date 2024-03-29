@@ -7,6 +7,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.RestrictionsManager
+import android.net.Uri
 import android.net.VpnService
 import android.os.Bundle
 import android.provider.Settings
@@ -15,11 +16,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
-ltContract
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -32,7 +32,6 @@ import androidx.navigation.navDeepLink
 import androidx.navigation.navigation
 import com.tailscale.ipn.Peer.RequestCodes
 import com.tailscale.ipn.mdm.MDMSettings
-import com.tailscale.ipn.ui.model.Ipn
 import com.tailscale.ipn.ui.notifier.Notifier
 import com.tailscale.ipn.ui.theme.AppTheme
 import com.tailscale.ipn.ui.view.AboutView
@@ -81,28 +80,28 @@ class MainActivity : ComponentActivity() {
         val navController = rememberNavController()
         this@MainActivity.navController = navController
         NavHost(
-          navController = navController,
-          startDestination = "main",
-          enterTransition = {
-            slideInHorizontally(animationSpec = tween(150), initialOffsetX = { it })
-          },
-          exitTransition = {
-            slideOutHorizontally(animationSpec = tween(150), targetOffsetX = { -it })
-          },
-          popEnterTransition = {
-            slideInHorizontally(animationSpec = tween(150), initialOffsetX = { -it })
-          },
-          popExitTransition = {
-            slideOutHorizontally(animationSpec = tween(150), targetOffsetX = { it })
-          }) {
-          val mainViewNav =
-              MainViewNavigation(
-                  onNavigateToSettings = { navController.navigate("settings") },
-                  onNavigateToPeerDetails = {
-                    navController.navigate("peerDetails/${it.StableID}")
-                  },
-                  onNavigateToExitNodes = { navController.navigate("exitNodes") },
-              )
+            navController = navController,
+            startDestination = "main",
+            enterTransition = {
+              slideInHorizontally(animationSpec = tween(150), initialOffsetX = { it })
+            },
+            exitTransition = {
+              slideOutHorizontally(animationSpec = tween(150), targetOffsetX = { -it })
+            },
+            popEnterTransition = {
+              slideInHorizontally(animationSpec = tween(150), initialOffsetX = { -it })
+            },
+            popExitTransition = {
+              slideOutHorizontally(animationSpec = tween(150), targetOffsetX = { it })
+            }) {
+              val mainViewNav =
+                  MainViewNavigation(
+                      onNavigateToSettings = { navController.navigate("settings") },
+                      onNavigateToPeerDetails = {
+                        navController.navigate("peerDetails/${it.StableID}")
+                      },
+                      onNavigateToExitNodes = { navController.navigate("exitNodes") },
+                  )
 
               val settingsNav =
                   SettingsNav(
@@ -166,12 +165,14 @@ class MainActivity : ComponentActivity() {
               }
               composable("intro") { IntroView { navController.popBackStack() } }
               composable(
-              "authComplete",
-              deepLinks =
-                  listOf(
-                      navDeepLink { uriPattern = "https://login.tailscale.com/admin/machines" })) {
-                MainView(navigation = mainViewNav)
-              }
+                  "authComplete",
+                  deepLinks =
+                      listOf(
+                          navDeepLink {
+                            uriPattern = "https://login.tailscale.com/admin/machines"
+                          })) {
+                    MainView(navigation = mainViewNav)
+                  }
             }
 
         // Show the intro screen one time
@@ -194,8 +195,8 @@ class MainActivity : ComponentActivity() {
     // This will trigger the login flow
     lifecycleScope.launch {
       Notifier.browseToURL.collect { url -> url?.let { Dispatchers.Main.run { login(it) } } }
-      }
     }
+  }
 
   override fun onNewIntent(intent: Intent?) {
     Log.d("KARI", "new intent action: ${intent?.action}")

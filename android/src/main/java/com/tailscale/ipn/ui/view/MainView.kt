@@ -132,7 +132,7 @@ fun MainView(navigation: MainViewNavigation, viewModel: MainViewModel = viewMode
                     selfPeer = selfPeerId.value,
                     onNavigateToPeerDetails = navigation.onNavigateToPeerDetails,
                     onSearch = { viewModel.searchPeers(it) })
-              }
+              },
               Ipn.State.NoState,
               Ipn.State.Starting -> StartingView()
               else ->

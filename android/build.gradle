@@ -66,16 +66,16 @@ android {
 
     signingConfigs {
         debug {
-            if (keystoreProperties.containsKey('debugKeystoreFile') &&
+           /* if (keystoreProperties.containsKey('debugKeystoreFile') &&
                 keystoreProperties.containsKey('debugKeystorePassword') &&
                 keystoreProperties.containsKey('debugKeyAlias') &&
-                keystoreProperties.containsKey('debugKeyPassword')) {
+                keystoreProperties.containsKey('debugKeyPassword')) {*/
                 // Use the debug signing config if all required properties are present
                 keyAlias keystoreProperties['debugKeyAlias']
                 keyPassword keystoreProperties['debugKeyPassword']
                 storeFile file(keystoreProperties['debugKeystoreFile'])
                 storePassword keystoreProperties['debugKeystorePassword']
-            }
+          //  }
         }
     }
 }
