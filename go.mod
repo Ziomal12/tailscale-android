@@ -16,6 +16,8 @@ require (
 	tailscale.com v1.63.0-pre.0.20240404175649-853e3e29a0a6
 )
 
+replace tailscale.com => /Users/karilam/tailscale
+
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	gioui.org/cpu v0.0.0-20210817075930-8d6a761490d2 // indirect

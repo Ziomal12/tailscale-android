@@ -45,6 +45,12 @@ type AppContext interface {
 	// GetPlatformDNSConfig gets a string representation of the current DNS
 	// configuration.
 	GetPlatformDNSConfig() string
+
+	// GetSysPolicyStringValue gets a string representation of the device policy settings.
+	GetSyspolicyStringValue(key string) (string, error)
+
+	// GetSysPolicyBooleanValue returns whether device policy settings are enabled.
+	GetSyspolicyBooleanValue(key string) (bool, error)
 }
 
 // IPNService corresponds to our IPNService in Java.
