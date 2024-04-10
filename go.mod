@@ -13,7 +13,7 @@ require (
 	golang.org/x/mobile v0.0.0-20240319015410-c58ccf4b0c87
 	golang.org/x/sys v0.18.0
 	inet.af/netaddr v0.0.0-20220617031823-097006376321
-	tailscale.com v1.63.0-pre.0.20240404175649-853e3e29a0a6
+	tailscale.com v1.63.0-pre.0.20240409210520-8fa302661425
 )
 
 require (
@@ -102,3 +102,5 @@ require (
 	gvisor.dev/gvisor v0.0.0-20240306221502-ee1e1f6070e3 // indirect
 	nhooyr.io/websocket v1.8.10 // indirect
 )
+
+replace tailscale.com => tailscale.com v1.63.0-pre.0.20240411152250-b28c268c3ef5

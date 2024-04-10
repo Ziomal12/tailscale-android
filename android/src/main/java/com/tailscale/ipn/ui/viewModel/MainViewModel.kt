@@ -3,10 +3,10 @@
 
 package com.tailscale.ipn.ui.viewModel
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.tailscale.ipn.R
 import com.tailscale.ipn.ui.localapi.Client
-import com.tailscale.ipn.ui.model.Ipn
 import com.tailscale.ipn.ui.model.Ipn.State
 import com.tailscale.ipn.ui.notifier.Notifier
 import com.tailscale.ipn.ui.util.LoadingIndicator
@@ -60,17 +60,30 @@ class MainViewModel : IpnViewModel() {
     viewModelScope.launch {
       searchTerm.collect { term -> peers.set(peerCategorizer.groupedAndFilteredPeers(term)) }
     }
+
+    viewModelScope.launch {
+      Notifier.prefs.collect { prefs -> Log.d(TAG, "Main VM - prefs = ${prefs}") }
+    }
   }
 
   fun searchPeers(searchTerm: String) {
     this.searchTerm.set(searchTerm)
   }
 
-  fun disableExitNode() {
+  fun toggleExitNode() {
+    val prefs = prefs.value ?: return
+
     LoadingIndicator.start()
-    val prefsOut = Ipn.MaskedPrefs()
-    prefsOut.ExitNodeID = null
-    Client(viewModelScope).editPrefs(prefsOut) { LoadingIndicator.stop() }
+    if (prefs.activeExitNodeID != null) {
+      // We have an active exit node so we should keep it, but disable it
+      Client(viewModelScope).setUseExitNode(false) { LoadingIndicator.stop() }
+    } else if (prefs.selectedExitNodeID != null) {
+      // We have a prior exit node to enable
+      Client(viewModelScope).setUseExitNode(true) { LoadingIndicator.stop() }
+    } else {
+      // This should not be possible.  In this state the button is hidden
+      Log.e(TAG, "No exit node to disable an no prior exit node to enable")
+    }
   }
 }
 
