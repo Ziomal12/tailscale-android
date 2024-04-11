@@ -57,6 +57,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -473,4 +474,14 @@ fun PromptPermissionsIfNecessary() {
           state.launchPermissionRequest()
         }
   }
+}
+
+@Preview
+@Composable
+fun MainViewPreview() {
+  val vm = MainViewModel()
+  MainView(
+      MainViewNavigation(
+          onNavigateToSettings = {}, onNavigateToPeerDetails = {}, onNavigateToExitNodes = {}),
+      vm)
 }

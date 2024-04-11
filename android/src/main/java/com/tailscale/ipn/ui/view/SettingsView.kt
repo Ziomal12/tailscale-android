@@ -24,6 +24,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tailscale.ipn.BuildConfig
@@ -32,6 +33,7 @@ import com.tailscale.ipn.ui.Links
 import com.tailscale.ipn.ui.theme.link
 import com.tailscale.ipn.ui.theme.listItem
 import com.tailscale.ipn.ui.util.Lists
+import com.tailscale.ipn.ui.util.set
 import com.tailscale.ipn.ui.viewModel.SettingsNav
 import com.tailscale.ipn.ui.viewModel.SettingsViewModel
 
@@ -189,4 +191,15 @@ fun AdminTextView(onNavigateToAdminConsole: () -> Unit) {
               onClick = { onNavigateToAdminConsole() })
         }
       })
+}
+
+@Preview
+@Composable
+fun SettingsPreview() {
+  val vm = SettingsViewModel()
+  vm.corpDNSEnabled.set(true)
+  vm.tailNetLockEnabled.set(true)
+  vm.isAdmin.set(true)
+  vm.managedByOrganization.set("Tails and Scales Inc.")
+  SettingsView(SettingsNav({}, {}, {}, {}, {}, {}, {}, {}, {}, {}), vm)
 }

@@ -26,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.tailscale.ipn.BuildConfig
 import com.tailscale.ipn.R
@@ -39,7 +40,11 @@ fun AboutView(backToSettings: BackNavigation) {
         verticalArrangement =
             Arrangement.spacedBy(space = 20.dp, alignment = Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(innerPadding).verticalScroll(rememberScrollState())) {
+        modifier =
+            Modifier.fillMaxWidth()
+                .fillMaxHeight()
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState())) {
           Image(
               modifier =
                   Modifier.width(100.dp)
@@ -77,4 +82,10 @@ fun AboutView(backToSettings: BackNavigation) {
               textAlign = TextAlign.Center)
         }
   }
+}
+
+@Preview
+@Composable
+fun AboutPreview() {
+  AboutView({})
 }

@@ -24,6 +24,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tailscale.ipn.R
@@ -32,6 +33,7 @@ import com.tailscale.ipn.ui.theme.link
 import com.tailscale.ipn.ui.util.ClipboardValueView
 import com.tailscale.ipn.ui.util.Lists
 import com.tailscale.ipn.ui.util.LoadingIndicator
+import com.tailscale.ipn.ui.util.set
 import com.tailscale.ipn.ui.viewModel.TailnetLockSetupViewModel
 import com.tailscale.ipn.ui.viewModel.TailnetLockSetupViewModelFactory
 
@@ -116,4 +118,13 @@ fun explainerText(): AnnotatedString {
     pop()
   }
   return annotatedString
+}
+
+@Composable
+@Preview
+fun TailnetLockSetupViewPreview() {
+  val vm = TailnetLockSetupViewModel()
+  vm.nodeKey.set("8BADF00D-7EE7-1337-DEAD-BEEF")
+  vm.tailnetLockKey.set("C0FFEE-CAFE-S0DA")
+  TailnetLockSetupView(backToSettings = {}, vm)
 }
