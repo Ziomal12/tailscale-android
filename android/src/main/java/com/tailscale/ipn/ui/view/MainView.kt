@@ -186,9 +186,7 @@ fun ExitNodeStatus(navAction: () -> Unit, viewModel: MainViewModel) {
               modifier = Modifier.clickable { navAction() },
               colors =
                   if (active) MaterialTheme.colorScheme.primaryListItem
-                  else ListItemDefaults.colors(
-                      containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
-                  ),
+                  else ListItemDefaults.colors(),
               overlineContent = {
                 Text(
                     stringResource(R.string.exit_node),
@@ -243,7 +241,7 @@ fun StartingView() {
       modifier = Modifier.fillMaxSize(),
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.CenterHorizontally) {
-        TailscaleLogoView(animated = true, usesOnBackgroundColors = false, Modifier.size(40.dp))
+        TailscaleLogoView(animated = true, Modifier.size(40.dp))
       }
 }
 

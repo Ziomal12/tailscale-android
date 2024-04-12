@@ -15,7 +15,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.tailscale.ipn.ui.view.TailscaleLogoView
@@ -54,7 +53,7 @@ object LoadingIndicator {
           Column(
               modifier = Modifier.fillMaxWidth(),
               horizontalAlignment = Alignment.CenterHorizontally) {
-                TailscaleLogoView(true, usesOnBackgroundColors = false, Modifier.size(72.dp).alpha(0.4f))
+                TailscaleLogoView(true, Modifier.size(72.dp))
               }
         }
       }
